@@ -169,7 +169,11 @@ The compose file pulls prebuilt images (`himanadh08/phishguard-backend`, `himana
 
 ## License / Attribution
 
-This repository does not include a LICENSE file, and no license terms are claimed or granted here. This project is a customized version of an earlier PhishGuard codebase; rights in the underlying code remain with their respective owners. If you reuse or redistribute this code, review the upstream project's terms and add an appropriate license first.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for the complete license text.
+
+Copyright (c) 2026 Himanadh08.
+
+This repository is a customized version of an earlier PhishGuard codebase that was published without a license file; rights in that earlier code remain with their respective owners, and Himanadh08 claims ownership only of the customizations made in this repository. Third-party dependencies bundled or referenced by this project remain under their own respective licenses.
 
 ## Author / Maintainer
 
