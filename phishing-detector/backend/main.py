@@ -16,8 +16,11 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
+from tldextract import extract as tld_extract
+from urllib.parse import urlparse
 
 from checks import domain_age, keywords, lookalike, safe_browsing, ssl_check
+from explanations import build_explanations, recommendation as build_recommendation
 from scorer import score
 
 # ─────────────────────────────────────────────
@@ -58,9 +61,11 @@ app = FastAPI(
 CORS_ORIGINS = [
     "http://localhost",
     "http://localhost:3000",
+    "http://localhost:3001",
     "http://localhost:5173",
     "http://localhost:8080",
     "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
     "http://127.0.0.1:5173",
     "http://127.0.0.1:8080",
 ]
@@ -102,6 +107,22 @@ class CheckResult(BaseModel):
     reason: str
 
 
+class WebsiteInfo(BaseModel):
+    """Facts derived only from the submitted URL string itself.
+    Everything else stays "Not available" — we never invent data."""
+
+    url: str
+    scheme: str
+    domain: str
+    hostname: str
+    domain_info: str
+    page_title: str = "Not available"
+    description: str = "Not available"
+    technologies: str = "Not available"
+    registration: str = "Not available"
+    server: str = "Not available"
+
+
 class AnalyzeResponse(BaseModel):
     url: str
     total_score: int
@@ -109,6 +130,9 @@ class AnalyzeResponse(BaseModel):
     verdict: str          # "safe" | "suspicious" | "dangerous"
     highest_status: str
     checks: List[CheckResult]
+    explanations: List[str]
+    recommendation: str
+    website_info: WebsiteInfo
 
 
 # ─────────────────────────────────────────────
@@ -150,6 +174,54 @@ async def _run_check(name: str, fn, url: str) -> Dict[str, Any]:
 
 
 # ─────────────────────────────────────────────
+# Website info — derived ONLY from the URL string and the
+# WHOIS data the Domain Age check already fetched. No new
+# network requests, no invented facts.
+# ─────────────────────────────────────────────
+def _build_website_info(url: str, check_results: List[Dict[str, Any]]) -> WebsiteInfo:
+    scheme = ""
+    hostname = ""
+    registered_domain = ""
+
+    try:
+        parsed = urlparse(url)
+        scheme = parsed.scheme.lower()
+        hostname = parsed.netloc.rsplit("@", 1)[-1]
+        # strip credentials, then port
+        if ":" in hostname:
+            host_only, _, port = hostname.rpartition(":")
+            if port.isdigit():
+                hostname = host_only
+        hostname = hostname.strip("[]")
+    except Exception:
+        pass
+
+    try:
+        extracted = tld_extract(url)
+        if extracted.domain and extracted.suffix:
+            registered_domain = f"{extracted.domain}.{extracted.suffix}"
+    except Exception:
+        pass
+
+    # WHOIS facts surfaced by the Domain Age check (no duplicate lookup):
+    # if it scored 0/safe we only know it's not young — don't guess the age.
+    registration = "Not available"
+    for r in check_results:
+        if r.get("name") == "Domain Age" and r.get("status") == "danger" and r.get("score", 0) >= 25:
+            registration = "WHOIS indicates a very recently registered domain (see Domain Age check for details)."
+            break
+
+    return WebsiteInfo(
+        url=url,
+        scheme=scheme or "Not available",
+        domain=registered_domain or "Not available",
+        hostname=hostname or "Not available",
+        domain_info=registration,
+        registration=registration,
+    )
+
+
+# ─────────────────────────────────────────────
 # Endpoint
 # ─────────────────────────────────────────────
 CHECKS = [
@@ -176,6 +248,12 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
 
     - **url**: The fully-qualified URL to analyse (must start with http:// or https://).
     """
+    if not _URL_RE.match(request.url):
+        raise HTTPException(
+            status_code=422,
+            detail="URL must start with http:// or https://",
+        )
+
     logger.info("Analysing URL: %s", request.url)
 
     tasks = [
@@ -211,6 +289,9 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
         verdict=final["verdict"],
         highest_status=final["highest_status"],
         checks=[CheckResult(**c) for c in final["checks"]],
+        explanations=build_explanations(final["verdict"], final["checks"]),
+        recommendation=build_recommendation(final["verdict"]),
+        website_info=_build_website_info(request.url, final["checks"]),
     )
 
 

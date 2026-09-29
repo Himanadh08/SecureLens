@@ -14,24 +14,24 @@
 
 ## Quick Start
 
-### 1. Install dependencies
+This frontend is part of the one-command development setup at the repository root — do **not** start the backend manually:
+
 ```bash
+# from the project root
 npm install
-```
-
-### 2. Start the FastAPI backend
-Make sure your Python backend is running on `http://localhost:8000`:
-```bash
-cd ../phishing-detector/backend
-uvicorn main:app --reload
-```
-
-### 3. Run the dev server
-```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Then open [http://localhost:3001](http://localhost:3001). This automatically:
+
+1. Installs the frontend dependencies (root `postinstall` runs `npm install` here)
+2. Starts the FastAPI backend on internal port 8000 and waits for its `/health` check
+3. Starts this Next.js app on port 3001
+4. Proxies all `/api/*` requests to the backend — the browser never talks to port 8000 directly
+
+> Frontend-only development (rare): you can run `npm run dev` in this directory, but you would then need the backend running separately. For all normal development use the root command above.
+
+> Backend API reference: [http://localhost:8000/docs](http://localhost:8000/docs) (while `npm run dev` is running).
 
 ## File Structure
 
@@ -51,16 +51,17 @@ safelink-frontend/
 ├── types/
 │   └── scan.ts             # All TypeScript interfaces
 ├── lib/
-│   └── api.ts              # API client (POST /analyze, 10s timeout)
+│   └── api.ts              # API client (POST /analyze, 20s timeout)
 └── hooks/
     └── useScan.ts          # Scan state management hook
 ```
 
 ## API Contract
 
-The frontend POSTs to `http://localhost:8000/analyze`:
+The browser only talks to this Next.js origin: `lib/api.ts` POSTs to `/api/analyze`, which `next.config.mjs` proxies to the FastAPI backend (`BACKEND_ORIGIN`, default `http://127.0.0.1:8000`). No backend URL is exposed to the browser.
 
 ```json
+// POST /api/analyze
 // Request
 { "url": "https://example.com" }
 
@@ -68,13 +69,31 @@ The frontend POSTs to `http://localhost:8000/analyze`:
 {
   "url": "https://example.com",
   "total_score": 15,
+  "max_score": 150,
   "verdict": "safe",
+  "highest_status": "safe",
   "checks": [
-    { "name": "SSL Check", "score": 0, "status": "safe", "reason": "Valid HTTPS certificate" }
+    { "name": "SSL / HTTPS", "score": 0, "status": "safe", "reason": "Valid SSL certificate confirmed..." }
   ],
+  "explanations": [],
+  "recommendation": "No significant threats were detected by the available checks. This does not guarantee that the website is completely safe.",
+  "website_info": {
+    "url": "https://example.com",
+    "scheme": "https",
+    "domain": "example.com",
+    "hostname": "example.com",
+    "domain_info": "Not available",
+    "page_title": "Not available",
+    "description": "Not available",
+    "technologies": "Not available",
+    "registration": "Not available",
+    "server": "Not available"
+  },
   "scanned_at": "2024-01-01T12:00:00Z"
 }
 ```
+
+`explanations` lists only the checks that actually triggered (score > 0 or an explicit finding); skipped/unavailable integrations are excluded so no invented reasons are shown.
 
 ## Design System
 

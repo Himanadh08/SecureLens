@@ -1,0 +1,21 @@
+{
+  "name": "phishguard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PhishGuard — one-command development setup: FastAPI backend (internal :8000) + Next.js frontend (user-facing :3001).",
+  "scripts": {
+    "postinstall": "npm run install:frontend",
+    "dev": "concurrently -k -n backend,frontend -c yellow,cyan \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd phishing-detector/backend && python -m uvicorn main:app --host 127.0.0.1 --port 8000",
+    "dev:frontend": "wait-on -t 60000 http-get://127.0.0.1:8000/health && cd safelink-frontend && npm run dev -- -p 3001",
+    "build": "cd safelink-frontend && next build",
+    "start": "concurrently -k -n backend,frontend -c yellow,cyan \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd phishing-detector/backend && python -m uvicorn main:app --host 127.0.0.1 --port 8000",
+    "start:frontend": "wait-on -t 60000 http-get://127.0.0.1:8000/health && cd safelink-frontend && npm run start -- -p 3001",
+    "install:frontend": "npm --prefix safelink-frontend install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "wait-on": "^8.0.1"
+  }
+}

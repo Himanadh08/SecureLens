@@ -1,7 +1,15 @@
 import { ScanResult, ScanError } from "@/types/scan";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-const TIMEOUT_MS = 10_000;
+/**
+ * API client.
+ *
+ * By default all requests go through the Next.js same-origin proxy
+ * (/api/* → FastAPI backend, see next.config.mjs), so the browser
+ * never needs to know the backend URL. Set NEXT_PUBLIC_API_URL only
+ * if you must bypass the proxy and call the backend directly.
+ */
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
+const TIMEOUT_MS = 20_000;
 
 export async function analyzeURL(url: string): Promise<ScanResult> {
   const controller = new AbortController();
@@ -13,13 +21,26 @@ export async function analyzeURL(url: string): Promise<ScanResult> {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url }),
       signal: controller.signal,
+      // same-origin request — cookies/credentials not needed
+      credentials: "omit",
     });
 
     if (!response.ok) {
-      const text = await response.text().catch(() => "Unknown server error");
+      let message = `Server returned ${response.status}`;
+      try {
+        const body = await response.json();
+        // FastAPI validation errors return {detail: [{msg, ...}]}
+        if (Array.isArray(body?.detail) && body.detail.length > 0) {
+          message = body.detail[0].msg || message;
+        } else if (typeof body?.detail === "string") {
+          message = body.detail;
+        }
+      } catch {
+        // non-JSON error body — keep the generic message
+      }
       const err: ScanError = {
-        type: "unknown",
-        message: `Server returned ${response.status}: ${text}`,
+        type: response.status === 504 ? "timeout" : "unknown",
+        message,
       };
       throw err;
     }
@@ -31,14 +52,14 @@ export async function analyzeURL(url: string): Promise<ScanResult> {
     if (e instanceof Error && e.name === "AbortError") {
       const err: ScanError = {
         type: "timeout",
-        message: "Request timed out after 10 seconds. Please try again.",
+        message: "Request timed out. The target site may be slow — please try again.",
       };
       throw err;
     }
     if (e instanceof TypeError && e.message.includes("fetch")) {
       const err: ScanError = {
         type: "network",
-        message: "Cannot connect to the scanner backend. Is it running?",
+        message: "Cannot reach the scanner service. Please make sure the app is fully started and try again.",
       };
       throw err;
     }

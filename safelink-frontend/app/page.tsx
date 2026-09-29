@@ -94,7 +94,7 @@ export default function Home() {
             How it works
           </Link>
           <a
-            href="https://github.com/rohit124551/Guard_URL"
+            href="https://github.com/Himanadh08"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"

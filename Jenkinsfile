@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        BACKEND_IMAGE = "rohit124551/phishguard-backend:latest"
-        FRONTEND_IMAGE = "rohit124551/phishguard-frontend:latest"
+        BACKEND_IMAGE = "himanadh08/phishguard-backend:latest"
+        FRONTEND_IMAGE = "himanadh08/phishguard-frontend:latest"
     }
 
     stages {
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 sleep time: 15, unit: 'SECONDS'
                 bat "curl -f http://localhost:8000/docs"
-                bat "curl -f http://localhost:3000"
+                bat "curl -f http://localhost:3001"
                 echo "Both services are healthy and running"
             }
         }
@@ -48,7 +48,7 @@ pipeline {
     post {
         success {
             echo "DEPLOYED SUCCESSFULLY"
-            echo "Frontend: http://localhost:3000"
+            echo "Frontend: http://localhost:3001"
             echo "Backend:  http://localhost:8000"
         }
         failure {

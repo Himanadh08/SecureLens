@@ -5,6 +5,9 @@ import { ScanResult, ScanError } from "@/types/scan";
 import { VerdictBadge } from "./VerdictBadge";
 import { ScoreRing } from "./ScoreRing";
 import { CheckRow } from "./CheckRow";
+import { WhySuspicious } from "./WhySuspicious";
+import { SecurityAssessment } from "./SecurityAssessment";
+import { WebsiteInfo } from "./WebsiteInfo";
 import { WifiOff, RefreshCw, RotateCcw } from "lucide-react";
 
 interface ResultCardProps {
@@ -59,11 +62,13 @@ export function ResultCard({ result, error, onReset, onRetry }: ResultCardProps)
 
   if (!result) return null;
 
+  const explanations = result.explanations ?? [];
   const date = new Date(result.scanned_at);
   const timeStr = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   const dateStr = date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
 
   return (
+    <>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -105,7 +110,6 @@ export function ResultCard({ result, error, onReset, onRetry }: ResultCardProps)
           </button>
         </div>
       )}
-
       {/* ── Footer ── */}
       <div className="border-t border-white/[0.06] mx-6" />
       <div className="px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -121,5 +125,18 @@ export function ResultCard({ result, error, onReset, onRetry }: ResultCardProps)
         </button>
       </div>
     </motion.div>
+
+    {/* ── Sections below the main result card ──
+        Order: WHY SUSPICIOUS → SECURITY ASSESSMENT → WEBSITE INFO. ── */}
+    <div className="w-full max-w-2xl mx-auto flex flex-col gap-4">
+      <WhySuspicious explanations={explanations} />
+      <SecurityAssessment
+        verdict={result.verdict}
+        explanations={explanations}
+        recommendation={result.recommendation}
+      />
+      {result.website_info && <WebsiteInfo info={result.website_info} />}
+    </div>
+    </>
   );
 }

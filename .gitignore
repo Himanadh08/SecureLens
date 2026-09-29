@@ -41,3 +41,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 jenkins.war
+
+# Local coding-agent files
+.freebuff/
+
+# Local scratch files
+temp.txt
+*.log

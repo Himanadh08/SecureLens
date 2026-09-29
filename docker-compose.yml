@@ -3,7 +3,8 @@ version: '3.8'
 services:
   # The Python FastAPI backend handles phishing detection logic
   backend:
-    image: rohit124551/phishguard-backend:latest
+    # Replace with your own registry path if you build/push these images yourself
+    image: himanadh08/phishguard-backend:latest
     container_name: phishguard-backend
     ports:
       - "8000:8000"
@@ -17,19 +18,21 @@ services:
       timeout: 10s
       retries: 3
 
-  # The Next.js frontend UI for users
+  # The Next.js frontend UI for users — the only user-facing port.
+  # API calls are proxied server-side from /api/* to the backend,
+  # so the browser never talks to port 8000 directly (no CORS).
   frontend:
-    image: rohit124551/phishguard-frontend:latest
+    image: himanadh08/phishguard-frontend:latest
     container_name: phishguard-frontend
     ports:
-      - "3000:3000"
+      - "3001:3000"
     depends_on:
       - backend
     restart: unless-stopped
     networks:
       - phishguard-network
     environment:
-      NEXT_PUBLIC_API_URL: http://backend:8000
+      BACKEND_ORIGIN: http://backend:8000
 
 networks:
   phishguard-network:
