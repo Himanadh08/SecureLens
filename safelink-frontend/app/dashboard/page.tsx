@@ -50,7 +50,7 @@ export default function DashboardPage() {
             <div className="p-1.5 rounded-lg bg-purple-600/20 border border-purple-500/30 group-hover:bg-purple-600/30 transition-colors">
               <Shield className="w-5 h-5 text-purple-400" />
             </div>
-            <span className="text-lg font-bold text-white tracking-tight">PhishGuard Dashboard</span>
+            <span className="text-lg font-bold text-white tracking-tight">SecureLens Dashboard</span>
           </Link>
         </div>
         <Link

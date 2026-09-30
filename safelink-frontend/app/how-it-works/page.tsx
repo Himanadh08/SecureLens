@@ -20,7 +20,7 @@ export default function HowItWorks() {
             <div className="p-1.5 rounded-lg bg-purple-600/20 border border-purple-500/30 group-hover:bg-purple-600/30 transition-colors">
               <Shield className="w-5 h-5 text-purple-400" />
             </div>
-            <span className="text-lg font-bold text-white tracking-tight">PhishGuard</span>
+            <span className="text-lg font-bold text-white tracking-tight">SecureLens</span>
           </Link>
         </div>
         <Link
@@ -52,7 +52,7 @@ export default function HowItWorks() {
           <h1 className="text-3xl sm:text-5xl font-extrabold text-white leading-tight tracking-tight mb-6">
             How{" "}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
-              PhishGuard
+              SecureLens
             </span>{" "}
             works
           </h1>
@@ -171,7 +171,7 @@ export default function HowItWorks() {
 
       {/* ── Footer ── */}
       <footer className="relative z-10 text-center py-6 text-xs text-slate-600 mt-auto">
-        PhishGuard &mdash; Powered by multi-factor phishing analysis
+        SecureLens &mdash; URL Security & Threat Assessment
       </footer>
     </main>
   );

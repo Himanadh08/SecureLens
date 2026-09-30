@@ -1,5 +1,5 @@
 """
-PhishGuard — Phishing URL Detector API
+SecureLens — URL Security & Threat Assessment API
 FastAPI backend that runs 5 independent security checks on a URL
 and returns a risk score and verdict.
 """
@@ -32,20 +32,20 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  %(levelname)-8s  %(name)s — %(message)s",
 )
-logger = logging.getLogger("phishguard")
+logger = logging.getLogger("securelens")
 
 # ─────────────────────────────────────────────
 # FastAPI app
 # ─────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("PhishGuard API starting up…")
+    logger.info("SecureLens API starting up…")
     yield
-    logger.info("PhishGuard API shutting down.")
+    logger.info("SecureLens API shutting down.")
 
 
 app = FastAPI(
-    title="PhishGuard — Phishing URL Detector",
+    title="SecureLens — URL Security & Threat Assessment",
     description=(
         "Analyses a URL across five security dimensions "
         "(domain age, keywords, Safe Browsing, lookalike domain, SSL) "
@@ -300,7 +300,7 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
 # ─────────────────────────────────────────────
 @app.get("/health", summary="Health check", include_in_schema=False)
 async def health():
-    return {"status": "ok", "service": "PhishGuard"}
+    return {"status": "ok", "service": "SecureLens"}
 
 
 # ─────────────────────────────────────────────

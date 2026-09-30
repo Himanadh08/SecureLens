@@ -1,8 +1,8 @@
 {
-  "name": "phishguard",
+  "name": "securelens",
   "version": "1.0.0",
   "private": true,
-  "description": "PhishGuard — one-command development setup: FastAPI backend (internal :8000) + Next.js frontend (user-facing :3001).",
+  "description": "SecureLens — one-command development setup: FastAPI backend (internal :8000) + Next.js frontend (user-facing :3001).",
   "scripts": {
     "postinstall": "npm run install:frontend",
     "dev": "concurrently -k -n backend,frontend -c yellow,cyan \"npm run dev:backend\" \"npm run dev:frontend\"",

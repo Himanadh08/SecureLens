@@ -1,6 +1,6 @@
 # SafeLink — URL Safety Scanner Frontend
 
-> **Know before you click.** A Next.js 14 + TypeScript frontend for the PhishGuard phishing URL detection system.
+> **Know before you click.** A Next.js 14 + TypeScript frontend for the SecureLens URL security & threat assessment system.
 
 ## Tech Stack
 

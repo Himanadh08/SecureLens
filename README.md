@@ -1,10 +1,12 @@
-# PhishGuard
+# SecureLens
 
-A modern web-based phishing URL analysis and security assessment application.
+URL Security & Threat Assessment
+
+A modern web-based URL security analysis and threat assessment application.
 
 ## Overview
 
-PhishGuard analyzes a submitted URL and returns a structured risk assessment:
+SecureLens analyzes a submitted URL and returns a structured risk assessment:
 
 - Analyzes the submitted URL across several independent security checks (domain age via WHOIS, suspicious URL keywords, Google Safe Browsing when an API key is configured, lookalike/typosquat domain detection, and SSL/HTTPS validation).
 - Collects available security and website information (scheme, registered domain, hostname, and registration notes when WHOIS data is available).
@@ -134,7 +136,7 @@ While the app is running, FastAPI's auto-generated API docs are available at `ht
 
 - API keys and secrets belong in server-side environment variables (e.g. `SAFE_BROWSING_KEY` in `phishing-detector/backend/.env`). No secrets are bundled in the frontend; the backend URL is only known server-side.
 - External services (WHOIS registries, Safe Browsing) may return incomplete or unavailable information; the UI reports such checks as skipped or warning instead of guessing.
-- A **safe** verdict is not an absolute guarantee of safety — it only means no risk indicators were found by the available checks. PhishGuard is an assessment aid, not a substitute for caution.
+- A **safe** verdict is not an absolute guarantee of safety — it only means no risk indicators were found by the available checks. SecureLens is an assessment aid, not a substitute for caution.
 - Scan history is stored only in your browser's local storage.
 
 ## Development
@@ -160,7 +162,7 @@ cd safelink-frontend && npx tsc --noEmit
 docker-compose up -d
 ```
 
-The compose file pulls prebuilt images (`himanadh08/phishguard-backend`, `himanadh08/phishguard-frontend`); the included Dockerfiles build the same images from source.
+The compose file pulls prebuilt images (`himanadh08/securelens-backend`, `himanadh08/securelens-frontend`); the included Dockerfiles build the same images from source.
 
 ## CI/CD
 

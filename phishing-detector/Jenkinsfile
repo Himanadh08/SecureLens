@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'phishguard-backend:latest'
+        DOCKER_IMAGE = 'securelens-backend:latest'
         // For pushing to DockerHub, you would set credentials:
         // DOCKER_CREDS = credentials('dockerhub-credentials')
     }
@@ -33,15 +33,15 @@ pipeline {
                 dir('backend') {
                     // Start container in background, run smoke tests, then cleanup
                     script {
-                        bat 'docker run -d --name phishguard-test -p 8000:8000 %DOCKER_IMAGE%'
+                        bat 'docker run -d --name securelens-test -p 8000:8000 %DOCKER_IMAGE%'
                         // Give it a moment to start
                         sleep 5
                         try {
                             // Run the python smoke test against the container
                             bat 'python smoke_test.py'
                         } finally {
-                            bat 'docker stop phishguard-test'
-                            bat 'docker rm phishguard-test'
+                            bat 'docker stop securelens-test'
+                            bat 'docker rm securelens-test'
                         }
                     }
                 }

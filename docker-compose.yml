@@ -4,14 +4,14 @@ services:
   # The Python FastAPI backend handles phishing detection logic
   backend:
     # Replace with your own registry path if you build/push these images yourself
-    image: himanadh08/phishguard-backend:latest
-    container_name: phishguard-backend
+    image: himanadh08/securelens-backend:latest
+    container_name: securelens-backend
     ports:
       - "8000:8000"
     env_file: ./phishing-detector/backend/.env
     restart: unless-stopped
     networks:
-      - phishguard-network
+      - securelens-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
       interval: 30s
@@ -22,18 +22,18 @@ services:
   # API calls are proxied server-side from /api/* to the backend,
   # so the browser never talks to port 8000 directly (no CORS).
   frontend:
-    image: himanadh08/phishguard-frontend:latest
-    container_name: phishguard-frontend
+    image: himanadh08/securelens-frontend:latest
+    container_name: securelens-frontend
     ports:
       - "3001:3000"
     depends_on:
       - backend
     restart: unless-stopped
     networks:
-      - phishguard-network
+      - securelens-network
     environment:
       BACKEND_ORIGIN: http://backend:8000
 
 networks:
-  phishguard-network:
+  securelens-network:
     driver: bridge

@@ -57,7 +57,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./phishing-detector/backend
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/phishguard-backend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/securelens-backend:latest
           push: true
 
       # Step 4: Build and push the frontend container image
@@ -65,7 +65,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./safelink-frontend
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/phishguard-frontend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/securelens-frontend:latest
           push: true
 
   notify:
@@ -76,6 +76,6 @@ jobs:
       - name: Print success
         run: |
           echo "✅ CI complete. Images pushed to Docker Hub."
-          echo "🔗 Backend: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/phishguard-backend:latest"
-          echo "🔗 Frontend: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/phishguard-frontend:latest"
+          echo "🔗 Backend: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/securelens-backend:latest"
+          echo "🔗 Frontend: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/securelens-frontend:latest"
           echo "🚀 Jenkins will now handle deployment."

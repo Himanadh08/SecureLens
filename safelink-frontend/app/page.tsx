@@ -77,7 +77,7 @@ export default function Home() {
           <div className="p-1.5 rounded-lg bg-purple-600/20 border border-purple-500/30">
             <Shield className="w-5 h-5 text-purple-400" />
           </div>
-          <span className="text-lg font-bold text-white tracking-tight">PhishGuard</span>
+          <span className="text-lg font-bold text-white tracking-tight">SecureLens</span>
           <IPDisplay />
         </div>
         <div className="flex items-center gap-4">
@@ -224,7 +224,7 @@ export default function Home() {
 
       {/* ── Footer ── */}
       <footer className="relative z-10 text-center py-6 text-xs text-slate-600">
-        PhishGuard &mdash; Powered by multi-factor phishing analysis
+        SecureLens &mdash; URL Security & Threat Assessment
       </footer>
     </main>
   );

@@ -9,12 +9,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "PhishGuard — Real-Time Phishing URL Detection System",
+  title: "SecureLens — URL Security & Threat Assessment",
   description:
     "Protect yourself from phishing attacks. Scan any URL instantly to detect malicious links and secure your online identity.",
   keywords: ["phishing", "url scanner", "link safety", "safe browsing"],
   openGraph: {
-    title: "PhishGuard — Know Before You Click",
+    title: "SecureLens — Know Before You Click",
     description: "Instant phishing and malware detection for any URL.",
     type: "website",
   },

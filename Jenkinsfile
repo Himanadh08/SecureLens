@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        BACKEND_IMAGE = "himanadh08/phishguard-backend:latest"
-        FRONTEND_IMAGE = "himanadh08/phishguard-frontend:latest"
+        BACKEND_IMAGE = "himanadh08/securelens-backend:latest"
+        FRONTEND_IMAGE = "himanadh08/securelens-frontend:latest"
     }
 
     stages {
